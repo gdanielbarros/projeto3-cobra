@@ -1,8 +1,7 @@
 /*******************************************************************************************
 *
 *   raylib - game: snake
-
-*   Geovanna - Daniel Alves de Barros
+*   Giovanna Andrade - Daniel Alves de Barros
 *
 ********************************************************************************************/
 
@@ -12,15 +11,11 @@
     #include <emscripten/emscripten.h>
 #endif
 
-//----------------------------------------------------------------------------------
 // Some Defines
-//----------------------------------------------------------------------------------
 #define SNAKE_LENGTH   256
 #define SQUARE_SIZE     31
 
-//----------------------------------------------------------------------------------
 // Types and Structures Definition
-//----------------------------------------------------------------------------------
 typedef struct Snake {
     Vector2 position;
     Vector2 size;
@@ -35,9 +30,7 @@ typedef struct Food {
     Color color;
 } Food;
 
-//------------------------------------------------------------------------------------
 // Global Variables Declaration
-//------------------------------------------------------------------------------------
 static const int screenWidth = 800;
 static const int screenHeight = 450;
 
@@ -51,56 +44,46 @@ static Vector2 snakePosition[SNAKE_LENGTH] = { 0 };
 static bool allowMove = false;
 static Vector2 offset = { 0 };
 static int counterTail = 0;
+static Sound overSound;
+static Sound eatSound;
 
-//------------------------------------------------------------------------------------
 // Module Functions Declaration (local)
-//------------------------------------------------------------------------------------
 static void InitGame(void);         // Initialize game
 static void UpdateGame(void);       // Update game (one frame)
 static void DrawGame(void);         // Draw game (one frame)
+static void LoadGame(void);         // Load game
 static void UnloadGame(void);       // Unload game
 static void UpdateDrawFrame(void);  // Update and Draw (one frame)
 
-//------------------------------------------------------------------------------------
 // Program main entry point
-//------------------------------------------------------------------------------------
 int main(void)
 {
+    int score = 0;
     // Initialization (Note windowTitle is unused on Android)
-    //---------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "classic game: snake");
-
+    
     InitGame();
-
+    LoadGame();
+    
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
 #else
     SetTargetFPS(60);
-    //--------------------------------------------------------------------------------------
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         // Update and Draw
-        //----------------------------------------------------------------------------------
         UpdateDrawFrame();
-        //----------------------------------------------------------------------------------
     }
 #endif
     // De-Initialization
-    //--------------------------------------------------------------------------------------
-    UnloadGame();         // Unload loaded data (textures, sounds, models...)
-
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
-
+    UnloadGame();                // Unload loaded data (textures, sounds, models...)
+    CloseWindow();              // Close window and OpenGL context
     return 0;
 }
 
-//------------------------------------------------------------------------------------
 // Module Functions Definitions (local)
-//------------------------------------------------------------------------------------
-
 // Initialize game variables
 void InitGame(void)
 {
@@ -117,7 +100,8 @@ void InitGame(void)
     for (int i = 0; i < SNAKE_LENGTH; i++)
     {
         snake[i].position = (Vector2){ offset.x/2, offset.y/2 };
-        snake[i].size = (Vector2){ SQUARE_SIZE, SQUARE_SIZE };
+        if (i == 0) snake[i].size = (Vector2){ SQUARE_SIZE, SQUARE_SIZE };
+        else snake[i].size = (Vector2){ SQUARE_SIZE, SQUARE_SIZE-2 };
         snake[i].speed = (Vector2){ SQUARE_SIZE, 0 };
 
         if (i == 0) snake[i].color = DARKBLUE;
@@ -130,7 +114,7 @@ void InitGame(void)
     }
 
     fruit.size = (Vector2){ SQUARE_SIZE, SQUARE_SIZE };
-    fruit.color = SKYBLUE;
+    fruit.color = RED;
     fruit.active = false;
 }
 
@@ -188,12 +172,17 @@ void UpdateGame(void)
                 (snake[0].position.x < 0) || (snake[0].position.y < 0))
             {
                 gameOver = true;
+                PlaySound(overSound);
             }
 
             // Collision with yourself
             for (int i = 1; i < counterTail; i++)
             {
-                if ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y)) gameOver = true;
+                if ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y))
+                {
+                    gameOver = true;
+                    PlaySound(overSound);
+                } 
             }
 
             // Fruit position calculation
@@ -219,13 +208,14 @@ void UpdateGame(void)
                 snake[counterTail].position = snakePosition[counterTail - 1];
                 counterTail += 1;
                 fruit.active = false;
+                PlaySound(eatSound);
+                //score++;
             }
-
             framesCounter++;
         }
     }
     else
-    {
+    {  
         if (IsKeyPressed(KEY_ENTER))
         {
             InitGame();
@@ -262,15 +252,34 @@ void DrawGame(void)
 
             if (pause) DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY);
         }
-        else DrawText("PRESS [ENTER] TO PLAY AGAIN", GetScreenWidth()/2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 20)/2, GetScreenHeight()/2 - 50, 20, GRAY);
-
+        else 
+        {
+            //DrawText("SCORE: ",GetScreenWidth()/10 - 50,GetScreenHeight()-20, 15,YELLOW);
+            DrawText("GAME OVER\n\n",GetScreenWidth()/3 - 20,GetScreenHeight()/2.5 - 20,50,YELLOW);
+            DrawText("PRESS [ENTER] TO PLAY AGAIN", GetScreenWidth()/2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 20)/2, GetScreenHeight()/1.75 - 20, 20, GRAY);
+        }
     EndDrawing();
+}
+
+void LoadGame(void)
+{
+    InitAudioDevice();
+    overSound = LoadSound("resources/gameover.mp3");
+    eatSound = LoadSound("resources/eatSound.mp3");
 }
 
 // Unload game variables
 void UnloadGame(void)
 {
+    UnloadSound(overSound);
+    UnloadSound(eatSound);
+    CloseAudioDevice();
     // TODO: Unload all dynamic loaded data (textures, sounds, models...)
+}
+
+void Record(score)
+{
+    
 }
 
 // Update and Draw (one frame)
