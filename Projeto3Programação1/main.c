@@ -14,6 +14,7 @@
 // Some Defines
 #define SNAKE_LENGTH   256
 #define SQUARE_SIZE     31
+#define MENU_ITEM       3
 
 // Types and Structures Definition
 typedef struct Snake {
@@ -58,10 +59,8 @@ static void UpdateDrawFrame(void);  // Update and Draw (one frame)
 // Program main entry point
 int main(void)
 {
-    int score = 0;
     // Initialization (Note windowTitle is unused on Android)
     InitWindow(screenWidth, screenHeight, "classic game: snake");
-    
     InitGame();
     LoadGame();
     
@@ -70,11 +69,14 @@ int main(void)
 #else
     SetTargetFPS(60);
 
+    int option = 0;
+    char *menuOptions[] = {"NOVO JOGO", "CARREGAR JOGO"};
+
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
-    {
-        // Update and Draw
-        UpdateDrawFrame();
+    {  
+        DrawMenu(menuOptions,option); // Draw menu
+        Menu(option);         
     }
 #endif
     // De-Initialization
@@ -101,7 +103,7 @@ void InitGame(void)
     {
         snake[i].position = (Vector2){ offset.x/2, offset.y/2 };
         if (i == 0) snake[i].size = (Vector2){ SQUARE_SIZE, SQUARE_SIZE };
-        else snake[i].size = (Vector2){ SQUARE_SIZE, SQUARE_SIZE-2 };
+        else snake[i].size = (Vector2){ SQUARE_SIZE, SQUARE_SIZE };
         snake[i].speed = (Vector2){ SQUARE_SIZE, 0 };
 
         if (i == 0) snake[i].color = DARKBLUE;
@@ -224,11 +226,50 @@ void UpdateGame(void)
     }
 }
 
+void DrawMenu(char **menuOptions, int option)
+{
+    BeginDrawing();
+        ClearBackground(BLACK);
+        DrawText("SNAKE",230,130,100,RED);
+        for (int i = 0; i < 2; i++)
+        {
+            if (i == option) DrawText(menuOptions[i], screenWidth / 2 - MeasureText(menuOptions[i], 20) / 2, 260 + i * 50, 20, YELLOW);
+            else DrawText(menuOptions[i], screenWidth / 2 - MeasureText(menuOptions[i], 20) / 2, 260 + i * 50, 20, GRAY);
+        }
+    EndDrawing();
+}
+
+void Menu(int option)
+{
+    // Get user option
+    if (IsKeyPressed(KEY_UP))
+    {
+        option--;
+        if (option < 0) option = 1;
+    }
+    else if (IsKeyPressed(KEY_DOWN))
+    {
+        option++;
+        if (option > 1) option = 0;
+    }
+
+    if(option==0&&IsKeyPressed(KEY_ENTER)) // if novo jogo it was select the game begin from the top
+    {
+        while(!WindowShouldClose())
+        {
+            // Update and Draw
+            UpdateDrawFrame(); 
+        }
+    } 
+    else if(option==1&&IsKeyPressed(KEY_ENTER)) // if carregar jogo it was select you can choose the saved game to continue
+    {
+        
+    }
+}
 // Draw game (one frame)
 void DrawGame(void)
 {
     BeginDrawing();
-
         ClearBackground(BLACK);
 
         if (!gameOver)
@@ -261,6 +302,7 @@ void DrawGame(void)
     EndDrawing();
 }
 
+// Load all dynamic loaded data (textures, sounds, models...)
 void LoadGame(void)
 {
     InitAudioDevice();
@@ -275,11 +317,6 @@ void UnloadGame(void)
     UnloadSound(eatSound);
     CloseAudioDevice();
     // TODO: Unload all dynamic loaded data (textures, sounds, models...)
-}
-
-void Record(score)
-{
-    
 }
 
 // Update and Draw (one frame)
