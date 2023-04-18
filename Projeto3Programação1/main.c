@@ -14,7 +14,6 @@
 // Some Defines
 #define SNAKE_LENGTH   256
 #define SQUARE_SIZE     31
-#define MENU_ITEM       3
 
 // Types and Structures Definition
 typedef struct Snake {
