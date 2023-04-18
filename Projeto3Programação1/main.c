@@ -58,6 +58,10 @@ static void UpdateDrawFrame(void);  // Update and Draw (one frame)
 // Program main entry point
 int main(void)
 {
+    //Variables Declaration
+    int option = 0;
+    char *menuOptions[] = {"NOVO JOGO", "CARREGAR JOGO"};
+
     // Initialization (Note windowTitle is unused on Android)
     InitWindow(screenWidth, screenHeight, "classic game: snake");
     InitGame();
@@ -68,19 +72,17 @@ int main(void)
 #else
     SetTargetFPS(60);
 
-    int option = 0;
-    char *menuOptions[] = {"NOVO JOGO", "CARREGAR JOGO"};
-
     // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose())      // Detect window close button or ESC key
     {  
         DrawMenu(menuOptions,option); // Draw menu
-        Menu(option);         
+        option = Menu(option);        // Get the user option of the menu 
+        Game(option);                 // Game begin
     }
 #endif
     // De-Initialization
-    UnloadGame();                // Unload loaded data (textures, sounds, models...)
-    CloseWindow();              // Close window and OpenGL context
+    UnloadGame();                     // Unload loaded data (textures, sounds, models...)
+    CloseWindow();                    // Close window and OpenGL context
     return 0;
 }
 
@@ -238,7 +240,7 @@ void DrawMenu(char **menuOptions, int option)
     EndDrawing();
 }
 
-void Menu(int option)
+int Menu(int option)
 {
     // Get user option
     if (IsKeyPressed(KEY_UP))
@@ -251,7 +253,11 @@ void Menu(int option)
         option++;
         if (option > 1) option = 0;
     }
+    return option;
+}
 
+void Game(option)
+{
     if(option==0&&IsKeyPressed(KEY_ENTER)) // if novo jogo it was select the game begin from the top
     {
         while(!WindowShouldClose())
