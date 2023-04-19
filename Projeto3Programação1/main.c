@@ -4,7 +4,6 @@
 *   Giovanna Andrade - Daniel Alves de Barros
 *
 ********************************************************************************************/
-
 #include "raylib.h"
 
 #if defined(PLATFORM_WEB)
@@ -54,6 +53,10 @@ static void DrawGame(void);         // Draw game (one frame)
 static void LoadGame(void);         // Load game
 static void UnloadGame(void);       // Unload game
 static void UpdateDrawFrame(void);  // Update and Draw (one frame)
+static void Game(int);
+static void DrawMenu();
+static int Menu(int); 
+static void Save(void);
 
 // Program main entry point
 int main(void)
@@ -61,7 +64,7 @@ int main(void)
     //Variables Declaration
     int option = 0;
     char *menuOptions[] = {"NOVO JOGO", "CARREGAR JOGO"};
-
+    
     // Initialization (Note windowTitle is unused on Android)
     InitWindow(screenWidth, screenHeight, "classic game: snake");
     InitGame();
@@ -256,21 +259,27 @@ int Menu(int option)
     return option;
 }
 
-void Game(option)
+void Game(int option)
 {
-    if(option==0&&IsKeyPressed(KEY_ENTER)) // if novo jogo it was select the game begin from the top
+    if(option==0&&IsKeyPressed(KEY_ENTER))      // if novo jogo it was select the game begin from the top
     {
-        while(!WindowShouldClose())
+        while(!WindowShouldClose())             // Game loop
         {
-            // Update and Draw
-            UpdateDrawFrame(); 
+            UpdateDrawFrame();                  // Update and Draw
         }
     } 
     else if(option==1&&IsKeyPressed(KEY_ENTER)) // if carregar jogo it was select you can choose the saved game to continue
     {
-        
+       /*
+                                               // Load saved file
+       while(!WindowShouldClose())             // Game loop
+        {
+            UpdateDrawFrame();                 // Update and Draw
+        }
+       */ 
     }
 }
+
 // Draw game (one frame)
 void DrawGame(void)
 {
@@ -296,11 +305,19 @@ void DrawGame(void)
             // Draw fruit to pick
             DrawRectangleV(fruit.position, fruit.size, fruit.color);
 
-            if (pause) DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY);
+            if (pause) 
+            {
+                DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY); // Draw pause
+                
+                DrawText("SALVAR JOGO",325, 250, 20,YELLOW); // Draw "save game"
+                if(IsKeyPressed(KEY_ENTER))
+                {
+                    // Saving the game
+                } 
+            }
         }
         else 
         {
-            //DrawText("SCORE: ",GetScreenWidth()/10 - 50,GetScreenHeight()-20, 15,YELLOW);
             DrawText("GAME OVER\n\n",GetScreenWidth()/3 - 20,GetScreenHeight()/2.5 - 20,50,YELLOW);
             DrawText("PRESS [ENTER] TO PLAY AGAIN", GetScreenWidth()/2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 20)/2, GetScreenHeight()/1.75 - 20, 20, GRAY);
         }
