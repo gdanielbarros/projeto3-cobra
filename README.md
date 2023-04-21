@@ -4,9 +4,10 @@
 
 **Projeto**
 A ideia inicial é baseado no jogo da bibliotaca, ainda essa semana executarmos:
-- Altera objeto cobra (velocidade)
-- Mudar objeto cobra 
+
 - Mudar plano de fundo pra dark ☑️
+- Salva o estado do jogo em arquivo 
+- Coloca imagem no objeto cobra
 
 
 **Links Uteis**
