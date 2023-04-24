@@ -9,7 +9,6 @@ A ideia inicial é baseado no jogo da bibliotaca, ainda essa semana executarmos:
 - Salva o estado do jogo em arquivo 
 
 Mudanças para melhoramento (posterior)
-- Coloca imagem no objeto cobra
 - Coloca imagem no fundo da tela do jogo
 
 
