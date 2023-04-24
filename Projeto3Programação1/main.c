@@ -53,10 +53,10 @@ static void DrawGame(void);         // Draw game (one frame)
 static void LoadGame(void);         // Load game
 static void UnloadGame(void);       // Unload game
 static void UpdateDrawFrame(void);  // Update and Draw (one frame)
-static void Game(int);
-static void DrawMenu();
-static int Menu(int); 
-static void Save(void);
+static void Game(int);              // Init new game and load the save game
+static void DrawMenu();             // Draw menu game
+static int Menu(int);               // Interative Menu
+static void Save(void);             // Save game
 
 // Program main entry point
 int main(void)
@@ -270,13 +270,13 @@ void Game(int option)
     } 
     else if(option==1&&IsKeyPressed(KEY_ENTER)) // if carregar jogo it was select you can choose the saved game to continue
     {
-       /*
+        /*
                                                // Load saved file
        while(!WindowShouldClose())             // Game loop
         {
             UpdateDrawFrame();                 // Update and Draw
         }
-       */ 
+       */
     }
 }
 
@@ -307,8 +307,7 @@ void DrawGame(void)
 
             if (pause) 
             {
-                DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY); // Draw pause
-                
+                DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY); // Draw pause 
                 DrawText("SALVAR JOGO",325, 250, 20,YELLOW); // Draw "save game"
                 if(IsKeyPressed(KEY_ENTER))
                 {
