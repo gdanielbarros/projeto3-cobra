@@ -6,10 +6,8 @@
 A ideia inicial é baseado no jogo da bibliotaca, ainda essa semana executarmos:
 
 - Mudar plano de fundo pra dark ☑️
+- Modulos ☑️
 - Salva o estado do jogo em arquivo 
-
-Mudanças para melhoramento (posterior)
-- Coloca imagem no fundo da tela do jogo
 
 
 **Links Uteis**
