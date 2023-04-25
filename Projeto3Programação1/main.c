@@ -56,14 +56,13 @@ static void UpdateDrawFrame(void);  // Update and Draw (one frame)
 static void Game(int);              // Init new game and load the save game
 static void DrawMenu();             // Draw menu game
 static int Menu(int);               // Interative Menu
-static void Save(void);             // Save game
 
 // Program main entry point
 int main(void)
 {
     //Variables Declaration
     int option = 0;
-    char *menuOptions[] = {"NOVO JOGO", "CARREGAR JOGO"};
+    char *menuOptions[] = {"NOVO JOGO", "SAIR"};
     
     // Initialization (Note windowTitle is unused on Android)
     InitWindow(screenWidth, screenHeight, "classic game: snake");
@@ -84,8 +83,7 @@ int main(void)
     }
 #endif
     // De-Initialization
-    UnloadGame();                     // Unload loaded data (textures, sounds, models...)
-    CloseWindow();                    // Close window and OpenGL context
+    UnloadGame();                     // Unload loaded data (textures, sounds, models...)                    
     return 0;
 }
 
@@ -215,7 +213,6 @@ void UpdateGame(void)
                 counterTail += 1;
                 fruit.active = false;
                 PlaySound(eatSound);
-                //score++;
             }
             framesCounter++;
         }
@@ -269,14 +266,8 @@ void Game(int option)
         }
     } 
     else if(option==1&&IsKeyPressed(KEY_ENTER)) // if carregar jogo it was select you can choose the saved game to continue
-    {
-        /*
-                                               // Load saved file
-       while(!WindowShouldClose())             // Game loop
-        {
-            UpdateDrawFrame();                 // Update and Draw
-        }
-       */
+    {   
+       CloseWindow();                           // Close window and OpenGL context  
     }
 }
 
@@ -307,12 +298,7 @@ void DrawGame(void)
 
             if (pause) 
             {
-                DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY); // Draw pause 
-                DrawText("SALVAR JOGO",325, 250, 20,YELLOW); // Draw "save game"
-                if(IsKeyPressed(KEY_ENTER))
-                {
-                    // Saving the game
-                } 
+                DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY); // Draw pause  
             }
         }
         else 
